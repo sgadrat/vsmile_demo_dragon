@@ -80,17 +80,24 @@ for asset in musics + sounds:
 
 	# Check there is no FFFF sample: not handled by engine... should be, but we want to fail sooner
 	with open(built_assets_filenames[asset['name']], 'rb') as asset_file:
-		if asset['format'] == 'pcm8':
-			end_sample = bytes.fromhex('ff')
-			sample_size = 1
-		else:
-			end_sample = bytes.fromhex('ffff')
-			sample_size = 2
+		with open(built_assets_filenames[asset['name']] + '.tmp', 'wb') as purged_asset_file:
+			if asset['format'] == 'pcm8':
+				end_sample = bytes.fromhex('ff')
+				patched_sample = bytes.fromhex('fe')
+				sample_size = 1
+			else:
+				end_sample = bytes.fromhex('ffff')
+				patched_sample = bytes.fromhex('fffe')
+				sample_size = 2
 
-		sample = asset_file.read(sample_size)
-		while sample != b'':
-			assert sample != end_sample, f'{asset["name"]} PCM file "{built_assets_filenames[asset["name"]]}" contains an end-sample "0x{end_sample}", it is not handled by the game engine, and sadly not your fault. Try another source file, fix the game engine, or change this assert to patch the file to have at max samples going to max-1'
 			sample = asset_file.read(sample_size)
+			while sample != b'':
+				if sample == end_sample:
+					print('WARNING: patching sample')
+					sample = patched_sample
+				purged_asset_file.write(sample)
+				sample = asset_file.read(sample_size)
+	os.rename(built_assets_filenames[asset['name']] + '.tmp', (built_assets_filenames[asset['name']]))
 
 	# Check file size is even (we don't want to include a binary file with partial word at the end)
 	asset_file_stats = os.stat(built_assets_filenames[asset['name']])

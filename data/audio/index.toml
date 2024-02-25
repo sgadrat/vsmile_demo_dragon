@@ -1,15 +1,5 @@
 [[music]]
 name = "main_theme"
-source = "data/audio/main_theme.mp3"
-format = "pcm_8"
-sampling_rate = 8000
-start = 16.000
-duration = 10.000
-
-[[sound]]
-name = "fight"
-source = "data/audio/main_theme.mp3"
-format = "pcm_8"
-sampling_rate = 8000
-start = 24.800
-duration = 0.800
+source = "data/audio/hatsune-miku-ievan-polkka.mp3"
+format = "pcm_16"
+sampling_rate = 16000
