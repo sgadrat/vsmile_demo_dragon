@@ -65,6 +65,7 @@ load_background:
 	ld r1, #(gecko_background_info & 0xffff) + 0
 	ld r2, D:[r1]
 	st r2, [PPU_BG1_SEGMENT_ADDR]
+	st r2, [PPU_BG2_SEGMENT_ADDR]
 
 	; Copy tilemap from ROM to RAM
 	;{
@@ -111,11 +112,14 @@ load_background:
 	; Set attribute of bg 1
 	ld r1, #(gecko_background_info & 0xffff) + 3
 	ld r2, D:[r1]
-	st r2, [PPU_BG1_ATTR]
+	st r2, [PPU_BG1_ATTR] ; first bottom layer
+	or r2, #0b01_0000_00_00_0_0_00 ; dd_pppp_hh_ww_v_h_bb
+	st r2, [PPU_BG2_ATTR] ; second bottom layer
 
 	; Set address of bg 1 tilemap
 	ld r2, #tilemap
 	st r2, [PPU_BG1_TILE_ADDR]
+	st r2, [PPU_BG2_TILE_ADDR]
 
 	; Set control config for bg 1
 	;   bit 0: bitmap mode (0 = disable)
@@ -127,8 +131,18 @@ load_background:
 	;   bit 6: vertical compression (0 = disable)
 	;   bit 7: 16-bit color mode (0 = disable)
 	;   bit 8: blend (0 = disable)
-	ld r2, #000001010b
+	ld r2, #100001010b
 	st r2, [PPU_BG1_CTRL]
+	ld r2, #100001010b
+	st r2, [PPU_BG2_CTRL]
+
+	; Use transparent as bg color (compile-background should handle that as bg1 property)
+	ld r2, #color(31, 31, 31) | color_transparent
+	st r2, [PPU_COLOR(0)]
+
+	; Offset BG2
+	ld r1, #16
+	st r1, [PPU_BG2_SCROLL_Y]
 
 	retf
 .ends
@@ -175,14 +189,23 @@ game_tick:
 
 	;TODO move player up and down
 
-	; Scroll background
+	; Scroll background 1
 	ld r1, [PPU_BG1_SCROLL_X]
-	add r1, #2
+	add r1, #3
 	st r1, [PPU_BG1_SCROLL_X]
 
 	;ld r1, [PPU_BG1_SCROLL_Y]
 	;add r1, #1
 	;st r1, [PPU_BG1_SCROLL_Y]
+
+	; Scroll bg2
+	;ld r1, [PPU_BG2_SCROLL_Y]
+	;add r1, #1
+	;st r1, [PPU_BG2_SCROLL_Y]
+
+	ld r1, [PPU_BG2_SCROLL_X]
+	add r1, #1
+	st r1, [PPU_BG2_SCROLL_X]
 
 	; Tick animation
 	ld bp, #player_a_anim
