@@ -7,6 +7,10 @@ tilemap:
 .resw (512/64)*(256/64)
 tilemap_end:
 
+tilemap2:
+.resw (512/64)*(256/64)
+tilemap2_end:
+
 ;
 ; Controllers
 ;

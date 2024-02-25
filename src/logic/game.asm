@@ -39,6 +39,7 @@ game_init:
 
 	; Load background
 	call load_background
+	call load_background2
 
 	; Players
 	call init_player_a
@@ -57,15 +58,14 @@ load_background:
 .scope
 	; DS = background's bank
 	and sr, #0b000000_1_1_1_1_111111 ; DS N Z S C CS
-	or sr, #(gecko_background_info >> 6) & 0b111111_0_0_0_0_000000
+	or sr, #(stars_background_info >> 6) & 0b111111_0_0_0_0_000000
 
 	; Set address of tile graphics data
 	;  The register only stores the 16 most significant bits of a 22-bit address
 	;  lowest 6 bits are expected to be zero, graphics therefore need to be 64-word aligned.
-	ld r1, #(gecko_background_info & 0xffff) + 0
+	ld r1, #(stars_background_info & 0xffff) + 0
 	ld r2, D:[r1]
 	st r2, [PPU_BG1_SEGMENT_ADDR]
-	st r2, [PPU_BG2_SEGMENT_ADDR]
 
 	; Copy tilemap from ROM to RAM
 	;{
@@ -73,11 +73,11 @@ load_background:
 		ld r2, #tilemap
 
 		; R3 = tilemap address (DS bank)
-		ld r1, #(gecko_background_info & 0xffff) + 1
+		ld r1, #(stars_background_info & 0xffff) + 1
 		ld r3, D:[r1]
 
 		; R4 = tile count
-		ld r1, #(gecko_background_info & 0xffff) + 2
+		ld r1, #(stars_background_info & 0xffff) + 2
 		ld r4, D:[r1]
 
 		; Copy loop
@@ -94,11 +94,11 @@ load_background:
 		ld r2, #PPU_COLOR(0)
 
 		; R3 = tilemap address (DS bank)
-		ld r1, #(gecko_background_info & 0xffff) + 4
+		ld r1, #(stars_background_info & 0xffff) + 4
 		ld r3, D:[r1]
 
 		; R4 = words count
-		ld r1, #(gecko_background_info & 0xffff) + 5
+		ld r1, #(stars_background_info & 0xffff) + 5
 		ld r4, D:[r1]
 
 		; Copy loop
@@ -110,16 +110,13 @@ load_background:
 	;}
 
 	; Set attribute of bg 1
-	ld r1, #(gecko_background_info & 0xffff) + 3
+	ld r1, #(stars_background_info & 0xffff) + 3
 	ld r2, D:[r1]
 	st r2, [PPU_BG1_ATTR] ; first bottom layer
-	or r2, #0b01_0000_00_00_0_0_00 ; dd_pppp_hh_ww_v_h_bb
-	st r2, [PPU_BG2_ATTR] ; second bottom layer
 
 	; Set address of bg 1 tilemap
 	ld r2, #tilemap
 	st r2, [PPU_BG1_TILE_ADDR]
-	st r2, [PPU_BG2_TILE_ADDR]
 
 	; Set control config for bg 1
 	;   bit 0: bitmap mode (0 = disable)
@@ -133,6 +130,89 @@ load_background:
 	;   bit 8: blend (0 = disable)
 	ld r2, #100001010b
 	st r2, [PPU_BG1_CTRL]
+
+	; Use transparent as bg color (compile-background should handle that as bg1 property)
+	ld r2, #color(31, 31, 31) | color_transparent
+	st r2, [PPU_COLOR(0)]
+
+	retf
+.ends
+
+load_background2:
+.scope
+	; DS = background's bank
+	and sr, #0b000000_1_1_1_1_111111 ; DS N Z S C CS
+	or sr, #(stars_far_background_info >> 6) & 0b111111_0_0_0_0_000000
+
+	; Set address of tile graphics data
+	;  The register only stores the 16 most significant bits of a 22-bit address
+	;  lowest 6 bits are expected to be zero, graphics therefore need to be 64-word aligned.
+	ld r1, #(stars_far_background_info & 0xffff) + 0
+	ld r2, D:[r1]
+	st r2, [PPU_BG2_SEGMENT_ADDR]
+
+	; Copy tilemap from ROM to RAM
+	;{
+		; R2 = destination address of the copied tilemap (zero-page ensured, it is RAM)
+		ld r2, #tilemap2
+
+		; R3 = tilemap address (DS bank)
+		ld r1, #(stars_far_background_info & 0xffff) + 1
+		ld r3, D:[r1]
+
+		; R4 = tile count
+		ld r1, #(stars_far_background_info & 0xffff) + 2
+		ld r4, D:[r1]
+
+		; Copy loop
+		copy_tilemap_loop:
+			ld r1, D:[r3++]
+			st r1, [r2++]
+			sub r4, #1
+			jnz copy_tilemap_loop
+	;}
+
+	; Set color palette
+	;{
+		; R2 = destination address
+		ld r2, #PPU_COLOR(0)
+
+		; R3 = tilemap address (DS bank)
+		ld r1, #(stars_far_background_info & 0xffff) + 4
+		ld r3, D:[r1]
+
+		; R4 = words count
+		ld r1, #(stars_far_background_info & 0xffff) + 5
+		ld r4, D:[r1]
+
+		; Copy loop
+		copy_palette_loop:
+			ld r1, D:[r3++]
+			st r1, [r2++]
+			sub r4, #1
+			jnz copy_palette_loop
+	;}
+
+	; Set attribute of bg 1
+	ld r1, #(stars_far_background_info & 0xffff) + 3
+	ld r2, D:[r1]
+	or r2, #0b01_0000_00_00_0_0_00 ; dd_pppp_hh_ww_v_h_bb
+	st r2, [PPU_BG2_ATTR] ; second bottom layer
+
+	; Set address of bg 1 tilemap
+	ld r2, #tilemap2
+	st r2, [PPU_BG2_TILE_ADDR]
+
+	; Set control config for bg 1
+	;   bit 0: bitmap mode (0 = disable)
+	;   bit 1: attribute map mode or register mode (1 = register mode)
+	;   bit 2: wallpaper mode (0 = disable)
+	;   bit 3: enable bg (1 = enable)
+	;   bit 4: horizontal line-specific movement (0 = disable)
+	;   bit 5: horizontal compression (0 = disable)
+	;   bit 6: vertical compression (0 = disable)
+	;   bit 7: 16-bit color mode (0 = disable)
+	;   bit 8: blend (0 = disable)
 	ld r2, #100001010b
 	st r2, [PPU_BG2_CTRL]
 
@@ -191,7 +271,7 @@ game_tick:
 
 	; Scroll background 1
 	ld r1, [PPU_BG1_SCROLL_X]
-	add r1, #3
+	add r1, #2
 	st r1, [PPU_BG1_SCROLL_X]
 
 	;ld r1, [PPU_BG1_SCROLL_Y]

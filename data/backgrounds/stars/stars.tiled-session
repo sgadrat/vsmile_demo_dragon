@@ -7,6 +7,22 @@
     "expandedProjectPaths": [
     ],
     "fileStates": {
+        "stars.tmx": {
+            "scale": 1.8981445312499998,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 255.77609713433148,
+                "y": 128.01975613520608
+            }
+        },
+        "stars_far.tmx": {
+            "scale": 1.8981445312499998,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 255.77609713433148,
+                "y": 128.01975613520608
+            }
+        }
     },
     "last.imagePath": "/home/sylvain/workspace/vsmile/homebrews/rgp_demo/data/backgrounds/stars",
     "map.height": 4,

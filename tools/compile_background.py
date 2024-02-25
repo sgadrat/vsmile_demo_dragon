@@ -104,17 +104,17 @@ with open(built_asm_filename, 'wt') as asm_file:
 	asm_file.write(textwrap.dedent(f"""\
 		; The graphics data needs to be 64-word aligned
 		.align_bits 64*16
-		gecko_background_tiles:
+		{map_name}_background_tiles:
 		.resw ({tile_width}*{tile_height}*{bit_depth})/16 ; tile 0 unusable, not in tileset files
 		.binfile "{relative_built_tileset_filename}"
 
-		gecko_background_tilemap:
+		{map_name}_background_tilemap:
 		.binfile "{relative_built_tilemap_filename}"
-		gecko_background_tilemap_end:
+		{map_name}_background_tilemap_end:
 
-		gecko_background_palette:
+		{map_name}_background_palette:
 		.include "{relative_built_palette_filename}"
-		gecko_background_palette_end:
+		{map_name}_background_palette_end:
 
 		; Status bits
 		;   bit 0-1: color depth (0 = 2-bit)
@@ -124,26 +124,26 @@ with open(built_asm_filename, 'wt') as asm_file:
 		;   bit 6-7: Y size (0 = 8 pixels)
 		;   bit 8-11: palette (0 = palette 0, colors 0-3 for 2-bit)
 		;   bit 12-13: depth (0 = bottom layer)
-		color_depth equ {color_depth_bits}     ; 0=2-bit ; 1=4-bit ; 2=6-bit ; 3=8-bit
-		horizontal_flip equ 0 ; 0=no ; 1=yes
-		vertical_flip equ 0   ; 0=no ; 1=yes
-		x_size equ {x_size_bits}          ; 0=8-pixels ; ...
-		y_size equ {y_size_bits}          ; 0=8-pixels ; ...
-		palette_number equ 0
-		bg_depth equ 0        ; 0=bottom-layer ; ...
+		{map_name}_bg_color_depth equ {color_depth_bits}     ; 0=2-bit ; 1=4-bit ; 2=6-bit ; 3=8-bit
+		{map_name}_bg_horizontal_flip equ 0 ; 0=no ; 1=yes
+		{map_name}_bg_vertical_flip equ 0   ; 0=no ; 1=yes
+		{map_name}_bg_x_size equ {x_size_bits}          ; 0=8-pixels ; ...
+		{map_name}_bg_y_size equ {y_size_bits}          ; 0=8-pixels ; ...
+		{map_name}_bg_palette_number equ 0
+		{map_name}_bg_bg_depth equ 0        ; 0=bottom-layer ; ...
 
-		gecko_background_info:
-		.dw gecko_background_tiles >> 6       ; address of tiles (64 words aligned)
-		.dw gecko_background_tilemap & 0xffff ; address of tilemap (lsw) (msw is assumed to be the same as this structure)
-		.dw gecko_background_tilemap_end - gecko_background_tilemap ; tilemap size (in words)
-		.dw (bg_depth<<12) + (palette_number<<8) + (y_size<<6) + (x_size<<4) + (vertical_flip<<3) + (horizontal_flip<<2) + color_depth ; BG attributes
-		.dw gecko_background_palette & 0xffff
-		.dw gecko_background_palette_end - gecko_background_palette
+		{map_name}_background_info:
+		.dw {map_name}_background_tiles >> 6       ; address of tiles (64 words aligned)
+		.dw {map_name}_background_tilemap & 0xffff ; address of tilemap (lsw) (msw is assumed to be the same as this structure)
+		.dw {map_name}_background_tilemap_end - {map_name}_background_tilemap ; tilemap size (in words)
+		.dw ({map_name}_bg_bg_depth<<12) + ({map_name}_bg_palette_number<<8) + ({map_name}_bg_y_size<<6) + ({map_name}_bg_x_size<<4) + ({map_name}_bg_vertical_flip<<3) + ({map_name}_bg_horizontal_flip<<2) + {map_name}_bg_color_depth ; BG attributes
+		.dw {map_name}_background_palette & 0xffff
+		.dw {map_name}_background_palette_end - {map_name}_background_palette
 
 		; Ensure that all this file is in the same bank
 		; (not sure it is really needed, at least it should not be needed)
 		.scope
-			.set begin_segment = gecko_background_tiles & 0x3f_0000
+			.set begin_segment = {map_name}_background_tiles & 0x3f_0000
 			.set end_segment = $ & 0x3f_0000
 			.if begin_segment == end_segment
 			.else

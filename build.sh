@@ -9,6 +9,7 @@ tools/build_sprites.py data/spritesheets/player.png > data/sprites.built.bin
 
 # Build backgrounds
 tools/compile_background.py data/backgrounds/stars/stars.tmx data/backgrounds/
+tools/compile_background.py data/backgrounds/stars/stars_far.tmx data/backgrounds/
 
 # Build sounds
 tools/compile_sounds.py data/audio/index.toml data/audio/

@@ -51,6 +51,7 @@ sprite_data:
 
 ; Background's data
 .include "data/backgrounds/stars.built.asm"
+.include "data/backgrounds/stars_far.built.asm"
 
 ; Audio data
 .include "src/logic/audio.asm"
