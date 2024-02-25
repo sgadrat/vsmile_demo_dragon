@@ -1,0 +1,6 @@
+rgp_demo.bin
+rgp_demo.lst
+*.built.*
+deps/
+__pycache__
+*.swp
