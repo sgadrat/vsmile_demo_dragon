@@ -20,14 +20,15 @@ audio_init:
 	st r1, [GPIO_C_MASK]
 
 	; Initialize SPU, highest volume level, interpolation off
-	; uuuuuu_n_l_vv_s_i_p_uu
+	; uuuuuu_n_l_vv_s_u_i_p_uu
 	; u: unused
 	; n: No Interpolation
 	; l: LP Enable
 	; v: High Volume
 	; s: SOF
 	; i: Init
-	ld r1, #0b0000000_1_1_10_0_1_0_00
+	; p: PCM
+	ld r1, #0b000000_1_1_11_0_0_1_1_00
 	st r1, [SPU_CTRL]
 
 	; Main volume
