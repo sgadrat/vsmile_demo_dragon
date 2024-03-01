@@ -1,20 +1,29 @@
 audio_init:
 .scope
 	; Configure GPIO (turn on V.Smile audio output)
-	ld r2, #0b0000_0000_0110_000
-	ld r3, #0b1111_1111_1001_111
+	ld r2, #0b0000_0000_0110_0000
+	ld r3, #0b1111_1111_1001_1111
 
-	ld r1, [GPIO_C_DATA]
-	and r1, r3
-	st r1, [GPIO_C_DATA]
+	;ld r1, #0b0000_0000_0001_0000
+	;st r1, [GPIO_MODE]
+
+	;ld r1, #0b10
+	;st r1, [SYSTEM_CTRL]
+
+	;ld r1, #0b1000_0000_0000_0000
+	;st r1, [SPU_BEAT_COUNT]
+
+	ld r1, [GPIO_C_ATTRIB]
+	or r1, r2
+	st r1, [GPIO_C_ATTRIB]
 
 	ld r1, [GPIO_C_DIR]
 	or r1, r2
 	st r1, [GPIO_C_DIR]
 
-	ld r1, [GPIO_C_ATTRIB]
-	or r1, r2
-	st r1, [GPIO_C_ATTRIB]
+	ld r1, [GPIO_C_DATA]
+	and r1, r3
+	st r1, [GPIO_C_DATA]
 
 	ld r1, #0
 	st r1, [GPIO_C_MASK]
@@ -28,7 +37,7 @@ audio_init:
 	; s: SOF
 	; i: Init
 	; p: PCM
-	ld r1, #0b000000_1_1_11_0_0_1_1_00
+	ld r1, #0b000000_0_1_11_0_0_1_1_00
 	st r1, [SPU_CTRL]
 
 	; Main volume
@@ -68,6 +77,69 @@ play_sound:
 ;  r3,r4 - assets table
 play_asset:
 .scope
+
+	ld r1, #0xf4bf
+	ld r2, #0xf5bf
+	st r1, [0x3d0b]
+	st r2, [0x3d0c]
+	st r1, [0x3d0c]
+	st r2, [0x3d0c]
+	st r1, [0x3d0c]
+	st r2, [0x3d0c]
+	st r1, [0x3d0c]
+	st r2, [0x3d0c]
+	st r1, [0x3d0c]
+
+	ld r1, #0x0002
+	st r1, [SPU_CHANNEL_ENV_MODE]
+	;ld r1, #0x2b99
+	;st r1, [SPU_CH_WAVE_ADDR(1)] ;FIXME
+	;ld r1, #0x2b9a
+	;st r1, [SPU_CH_WAVE_ADDR(1)] ;FIXME
+		ld r1, #(audio_asset_main_theme+6) >> 16
+		st r1, [SPU_CH_WAVE_ADDR(1)]
+	;ld r1, #0x9039 ; 0b10_01_000000_111001
+	;st r1, [SPU_CH_MODE(1)]
+		ld r1, #0b01_10_000000_000000 + (((audio_asset_main_theme+6) >> 16) << 6) + ((audio_asset_main_theme+6) >> 16)
+		st r1, [SPU_CH_MODE(1)]
+	ld r1, #0x0000
+	st r1, [SPU_CH_LOOP_ADDR(1)]
+	ld r1, #0x3f7e
+	st r1, [SPU_CH_PAN_VOL(1)]
+	ld r1, #0x0000
+	st r1, [SPU_CH_ENVELOPE0(1)]
+	ld r1, #0x0000
+	st r1, [SPU_CH_ENVELOPE1(1)]
+	ld r1, #0x0000
+	st r1, [SPU_CH_ENVELOPE_ADDR_HI(1)]
+	ld r1, #0x0000
+	st r1, [SPU_CH_ENVELOPE_ADDR_LO(1)]
+	ld r1, #0x0c00
+	st r1, [SPU_CH_ENVELOPE_LOOP_CTRL(1)]
+	ld r1, #0x007f
+	st r1, [SPU_CH_ENVELOPE_DATA(1)]
+	ld r1, #0x8000
+	st r1, [SPU_CH_WAVE_DATA(1)]
+	ld r1, #0x0000
+	st r1, [SPU_CH_ADPCM_SEL(1)]
+
+	ld r1, #0xa000
+	st r1, [SPU_CH_PHASE_HI(1)]
+	ld r1, #0xa07d
+	st r1, [SPU_CH_PHASE_LO(1)]
+	ld r1, #0x0000
+	st r1, [SPU_CH_PHASE_ACCUM_HI(1)]
+	ld r1, #0x0000
+	st r1, [SPU_CH_PHASE_ACCUM_LO(1)]
+	ld r1, #0x0002
+	st r1, [SPU_CH_RAMP_DOWN_CLOCK(1)]
+	ld r1, #0x0002
+	st r1, [SPU_CHANNEL_STOP]
+	ld r1, #0x0002
+	st r1, [SPU_CHANNEL_ENABLE]
+
+	retf
+
 	; Channel specific configuration
 	;{
 		; Push assets table address
@@ -170,6 +242,11 @@ play_asset:
 		add r4, r3, #SPU_CH_PAN_VOL(0)
 		st r1, [r4]
 
+		; Debug
+		ld r1, #0b0000000_11_0000000
+		add r4, r3, #SPU_CH_PHASE_CTRL(0)
+		st r1, [r4]
+
 		; Set envelope volume to full
 		; ccccccccc_ddddddd
 		;  c: Envelope count
@@ -213,9 +290,9 @@ play_asset:
 
 		; Channel envelope repeat, 1 bit per channel
 		; Actually we never use enveloppe repeat, so there is no real need to reset that bit (it will never be 1)
-		;ld r1, [SPU_CHANNEL_REPEAT]
-		;and r1, r3
-		;st r1, [SPU_CHANNEL_REPEAT]
+		ld r1, [SPU_CHANNEL_REPEAT]
+		and r1, r3
+		st r1, [SPU_CHANNEL_REPEAT]
 
 		; Channel envelope mode, 1 bit per channel
 		ld r1, [SPU_CHANNEL_ENV_MODE]

@@ -3,3 +3,4 @@ name = "main_theme"
 source = "data/audio/hatsune-miku-ievan-polkka.mp3"
 format = "pcm_16"
 sampling_rate = 16000
+duration = 15
