@@ -96,15 +96,15 @@ play_asset:
 	;st r1, [SPU_CH_WAVE_ADDR(1)] ;FIXME
 	;ld r1, #0x2b9a
 	;st r1, [SPU_CH_WAVE_ADDR(1)] ;FIXME
-		ld r1, #(audio_asset_main_theme+6) >> 16
+		ld r1, #(audio_asset_main_theme+6) & 0xffff
 		st r1, [SPU_CH_WAVE_ADDR(1)]
 	;ld r1, #0x9039 ; 0b10_01_000000_111001
 	;st r1, [SPU_CH_MODE(1)]
 		ld r1, #0b01_10_000000_000000 + (((audio_asset_main_theme+6) >> 16) << 6) + ((audio_asset_main_theme+6) >> 16)
 		st r1, [SPU_CH_MODE(1)]
-	ld r1, #0x0000
+	ld r1, #(audio_asset_main_theme+6) & 0xffff
 	st r1, [SPU_CH_LOOP_ADDR(1)]
-	ld r1, #0x3f7e
+	ld r1, #0x3f7e ; 0b0_01111110_1111110
 	st r1, [SPU_CH_PAN_VOL(1)]
 	ld r1, #0x0000
 	st r1, [SPU_CH_ENVELOPE0(1)]
@@ -123,10 +123,14 @@ play_asset:
 	ld r1, #0x0000
 	st r1, [SPU_CH_ADPCM_SEL(1)]
 
-	ld r1, #0xa000
-	st r1, [SPU_CH_PHASE_HI(1)]
-	ld r1, #0xa07d
-	st r1, [SPU_CH_PHASE_LO(1)]
+	;ld r1, #0xa000
+	;st r1, [SPU_CH_PHASE_HI(1)]
+	;ld r1, #0xa07d
+	;st r1, [SPU_CH_PHASE_LO(1)]
+		ld r1, #0x0000
+		st r1, [SPU_CH_PHASE_HI(1)]
+		ld r1, #0x7482
+		st r1, [SPU_CH_PHASE_LO(1)]
 	ld r1, #0x0000
 	st r1, [SPU_CH_PHASE_ACCUM_HI(1)]
 	ld r1, #0x0000
