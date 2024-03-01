@@ -1,0 +1,52 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8ag3vfm5pkqn"]
+
+[ext_resource type="Script" path="res://Tree.gd" id="1_gw0et"]
+[ext_resource type="Script" path="res://TextEdit.gd" id="2_ngrjo"]
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_dmmej"]
+number_color = Color(1, 0, 1, 1)
+symbol_color = Color(0, 1, 0.980392, 1)
+function_color = Color(1, 1, 1, 1)
+member_variable_color = Color(1, 1, 1, 1)
+keyword_colors = {
+"duration": Color(1, 0.533333, 1, 1),
+"format": Color(1, 0.533333, 1, 1),
+"music": Color(1, 1, 0, 1),
+"name": Color(1, 0.533333, 1, 1),
+"sampling_rate": Color(1, 0.533333, 1, 1),
+"sound": Color(1, 1, 0, 1),
+"source": Color(1, 0.533333, 1, 1),
+"start": Color(1, 0.533333, 1, 1)
+}
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -2.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 2
+offset_right = 1150.0
+offset_bottom = 644.0
+split_offset = 200
+
+[node name="Tree" type="Tree" parent="HSplitContainer"]
+layout_mode = 2
+script = ExtResource("1_gw0et")
+
+[node name="TextEdit" type="TextEdit" parent="HSplitContainer"]
+layout_mode = 2
+text = "[[music]]
+name = \"main_theme\"
+source = \"data/audio/hatsune-miku-ievan-polkka.mp3\"
+format = \"pcm_16\"
+sampling_rate = 16000"
+syntax_highlighter = SubResource("CodeHighlighter_dmmej")
+script = ExtResource("2_ngrjo")
+
+[connection signal="cell_selected" from="HSplitContainer/Tree" to="HSplitContainer/TextEdit" method="_on_tree_cell_selected"]

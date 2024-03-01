@@ -4,3 +4,4 @@ rgp_demo.lst
 deps/
 __pycache__
 *.swp
+editor/.godot/
