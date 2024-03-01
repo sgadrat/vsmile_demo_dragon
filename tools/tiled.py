@@ -15,8 +15,8 @@ def load(input_filename):
 		except FileNotFoundError:
 			pass
 
-	map_filename = '/tmp/load_tiled_{os.getpid()}.json'
-	tileset_filename = '/tmp/load_tiled_tileset_{os.getpid()}.json'
+	map_filename = f'/tmp/load_tiled_{os.getpid()}.json'
+	tileset_filename = f'/tmp/load_tiled_tileset_{os.getpid()}.json'
 
 	try:
 		# Ensure to have an exported JSON file
