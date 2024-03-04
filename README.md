@@ -2,7 +2,7 @@
 
 It was done for the RGPlay 2024 at Meaux, France.
 
-!(RGPlay demo in action)[readme/demo.gif]
+![RGPlay demo in action](readme/demo.gif)
 
 Features:
 - Animated sprite (the dragon)
