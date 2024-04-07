@@ -78,71 +78,11 @@ play_sound:
 play_asset:
 .scope
 
+	;HACK make it work
+	push r1, [sp]
 	ld r1, #0xf4bf
-	ld r2, #0xf5bf
-	st r1, [0x3d0b]
-	st r2, [0x3d0c]
-	st r1, [0x3d0c]
-	st r2, [0x3d0c]
-	st r1, [0x3d0c]
-	st r2, [0x3d0c]
-	st r1, [0x3d0c]
-	st r2, [0x3d0c]
-	st r1, [0x3d0c]
-
-	ld r1, #0x0002
-	st r1, [SPU_CHANNEL_ENV_MODE]
-	;ld r1, #0x2b99
-	;st r1, [SPU_CH_WAVE_ADDR(1)] ;FIXME
-	;ld r1, #0x2b9a
-	;st r1, [SPU_CH_WAVE_ADDR(1)] ;FIXME
-		ld r1, #(audio_asset_main_theme+6) & 0xffff
-		st r1, [SPU_CH_WAVE_ADDR(1)]
-	;ld r1, #0x9039 ; 0b10_01_000000_111001
-	;st r1, [SPU_CH_MODE(1)]
-		ld r1, #0b01_10_000000_000000 + (((audio_asset_main_theme+6) >> 16) << 6) + ((audio_asset_main_theme+6) >> 16)
-		st r1, [SPU_CH_MODE(1)]
-	ld r1, #(audio_asset_main_theme+6) & 0xffff
-	st r1, [SPU_CH_LOOP_ADDR(1)]
-	ld r1, #0x3f7e ; 0b0_01111110_1111110
-	st r1, [SPU_CH_PAN_VOL(1)]
-	ld r1, #0x0000
-	st r1, [SPU_CH_ENVELOPE0(1)]
-	ld r1, #0x0000
-	st r1, [SPU_CH_ENVELOPE1(1)]
-	ld r1, #0x0000
-	st r1, [SPU_CH_ENVELOPE_ADDR_HI(1)]
-	ld r1, #0x0000
-	st r1, [SPU_CH_ENVELOPE_ADDR_LO(1)]
-	ld r1, #0x0c00
-	st r1, [SPU_CH_ENVELOPE_LOOP_CTRL(1)]
-	ld r1, #0x007f
-	st r1, [SPU_CH_ENVELOPE_DATA(1)]
-	ld r1, #0x8000
-	st r1, [SPU_CH_WAVE_DATA(1)]
-	ld r1, #0x0000
-	st r1, [SPU_CH_ADPCM_SEL(1)]
-
-	;ld r1, #0xa000
-	;st r1, [SPU_CH_PHASE_HI(1)]
-	;ld r1, #0xa07d
-	;st r1, [SPU_CH_PHASE_LO(1)]
-		ld r1, #0x0000
-		st r1, [SPU_CH_PHASE_HI(1)]
-		ld r1, #0x7482
-		st r1, [SPU_CH_PHASE_LO(1)]
-	ld r1, #0x0000
-	st r1, [SPU_CH_PHASE_ACCUM_HI(1)]
-	ld r1, #0x0000
-	st r1, [SPU_CH_PHASE_ACCUM_LO(1)]
-	ld r1, #0x0002
-	st r1, [SPU_CH_RAMP_DOWN_CLOCK(1)]
-	ld r1, #0x0002
-	st r1, [SPU_CHANNEL_STOP]
-	ld r1, #0x0002
-	st r1, [SPU_CHANNEL_ENABLE]
-
-	retf
+	st r1, [GPIO_C_DATA]
+	pop r1, [sp]
 
 	; Channel specific configuration
 	;{
@@ -266,6 +206,16 @@ play_asset:
 		ld r1, #0b0000000_000000000
 		add r4, r3, #SPU_CH_ENVELOPE_LOOP_CTRL(0)
 		st r1, [r4]
+
+		; Registers that could be set but it does not seems necessary until we have code that actually modify it
+		;ld r1, #0x0000
+		;st r1, [SPU_CH_ENVELOPE0(1)]
+		;st r1, [SPU_CH_ENVELOPE1(1)]
+		;st r1, [SPU_CH_ENVELOPE_ADDR_HI(1)]
+		;st r1, [SPU_CH_ENVELOPE_ADDR_LO(1)]
+		;st r1, [SPU_CH_ADPCM_SEL(1)]
+		;ld r1, #0x0002
+		;st r1, [SPU_CH_RAMP_DOWN_CLOCK(1)]
 	;}
 
 	; Changes in global audio configuration
@@ -288,6 +238,7 @@ play_asset:
 		xor r3, r2, #0b1111_1111_1111_1111
 
 		; Disable rampdown, 1 bit per channel
+		;FIXME maybe should be ORed with r2 (bit set) instead of ANDed with r3 (bit unset)
 		ld r1, [SPU_ENV_RAMP_DOWN]
 		and r1, r3
 		st r1, [SPU_ENV_RAMP_DOWN]
