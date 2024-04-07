@@ -48,7 +48,7 @@ game_init:
 	call audio_init
 
 	ld r1, #0
-	ld r2, #1
+	ld r2, #0
 	call play_music
 
 	retf
