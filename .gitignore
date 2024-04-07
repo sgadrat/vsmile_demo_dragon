@@ -5,3 +5,4 @@ deps/
 __pycache__
 *.swp
 editor/.godot/
+*.tiled-session
