@@ -2,7 +2,6 @@ audio_init:
 .scope
 	; Configure GPIO (turn on V.Smile audio output)
 	ld r2, #0b0000_0000_0110_0000
-	ld r3, #0b1111_1111_1001_1111
 
 	;ld r1, #0b0000_0000_0001_0000
 	;st r1, [GPIO_MODE]
@@ -21,8 +20,12 @@ audio_init:
 	or r1, r2
 	st r1, [GPIO_C_DIR]
 
+	; GPIO_C_DATA - unset AudioEnable bit, set PowerControl bit
 	ld r1, [GPIO_C_DATA]
+	ld r3, #0b1111_1111_1011_1111
 	and r1, r3
+	ld r3, #0b0000_0000_1000_0000
+	or r1, r3
 	st r1, [GPIO_C_DATA]
 
 	ld r1, #0
@@ -77,12 +80,6 @@ play_sound:
 ;  r3,r4 - assets table
 play_asset:
 .scope
-
-	;HACK make it work
-	push r1, [sp]
-	ld r1, #0xf4bf
-	st r1, [GPIO_C_DATA]
-	pop r1, [sp]
 
 	; Channel specific configuration
 	;{

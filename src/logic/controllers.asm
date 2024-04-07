@@ -46,9 +46,10 @@ controllers_init:
 	;     R - UART Rx
 	;     T - UART Tx
 	;     C - Controller power (unsure about that)
+	;
 	;         fedcba9876543210
-	;         CTRB.AbaPE?lLLLL
-	ld r1, #0b1111011101111111
+	;         CTRB_.Aba_PE?l_LLLL
+	ld r1, #0b1111_0111_0111_1111
 	st r1, [GPIO_C_DATA]
 
 	// Enable Uart RX (controller input)
