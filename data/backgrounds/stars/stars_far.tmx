@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="8" height="4" tilewidth="64" tileheight="64" infinite="0" nextlayerid="2" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="8" height="4" tilewidth="64" tileheight="64" infinite="0" nextlayerid="2" nextobjectid="1">
  <properties>
   <property name="bit_depth" type="int" value="2"/>
  </properties>
  <tileset firstgid="1" source="stars_tileset.tsx"/>
  <layer id="1" name="bg1" width="8" height="4">
   <data encoding="csv">
-5,6,5,6,5,6,6,6,
-6,6,6,4,6,6,6,5,
-4,6,5,6,6,4,6,5,
-6,4,6,6,6,6,5,6
+5,5,5,4,5,6,4,5,
+6,5,4,4,5,5,5,5,
+4,4,5,6,5,4,5,5,
+4,4,5,4,4,5,5,6
 </data>
  </layer>
 </map>
