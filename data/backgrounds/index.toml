@@ -1,0 +1,5 @@
+[[background]]
+source = "data/backgrounds/stars/stars.tmx"
+
+[[background]]
+source = "data/backgrounds/stars/stars_far.tmx"

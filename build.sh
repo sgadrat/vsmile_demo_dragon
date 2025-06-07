@@ -8,8 +8,7 @@ asm="${NAKEN_BIN:-naken_asm}"
 tools/build_sprites.py data/spritesheets/player.png > data/sprites.built.bin
 
 # Build backgrounds
-tools/compile_background.py data/backgrounds/stars/stars.tmx data/backgrounds/
-tools/compile_background.py data/backgrounds/stars/stars_far.tmx data/backgrounds/
+tools/compile_backgrounds.py data/backgrounds/index.toml data/backgrounds/
 
 # Build sounds
 tools/compile_sounds.py data/audio/index.toml data/audio/
